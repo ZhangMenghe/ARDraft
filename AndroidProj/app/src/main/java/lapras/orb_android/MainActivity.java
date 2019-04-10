@@ -1,7 +1,10 @@
 package lapras.orb_android;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
+import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.opengl.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,17 +23,20 @@ import java.io.IOException;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import lapras.orb_android.GLRender.Cube;
+import lapras.orb_android.GLRender.MatrixState;
+
 import static lapras.orb_android.CVandCGViewBase.RGBA;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private CVandCGViewBase cvgSurfaceView;
+    private GLSurfaceView glSurfaceView;
 
     private long controllerAddr;
 
     private BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
     private Mat cframe;
-//    private Size _frame_size = new Size(640,480);
 
     private int viewportWidth;
     private int viewportHeight;
@@ -63,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             cvLoaderCallBack.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
-        cvgSurfaceView.onResume();
-
+        glSurfaceView.onResume();
     }
     @Override
     public void onPause() {
@@ -72,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         if (cvgSurfaceView != null)
             cvgSurfaceView.disableView();
 
-        cvgSurfaceView.onPause();
+        glSurfaceView.onPause();
     }
     public void onDestroy() {
         super.onDestroy();
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupSurfaceView(){
         cvgSurfaceView = (CVandCGViewBase) findViewById(R.id.camera_view);
+        glSurfaceView = findViewById(R.id.glSurfaceView);
 
         cvgSurfaceView.enableFpsMeter();
         cvgSurfaceView.setCameraIndex(CVandCGJavaCamera2View.CAMERA_ID_ANY);
@@ -89,13 +95,13 @@ public class MainActivity extends AppCompatActivity {
         cvgSurfaceView.disableView();
         cvgSurfaceView.setVisibility(SurfaceView.VISIBLE);
 
-        cvgSurfaceView.setPreserveEGLContextOnPause(true);
-
-        cvgSurfaceView.setEGLContextClientVersion(2);
-        cvgSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0); // Alpha used for plane blending.
-        cvgSurfaceView.setRenderer(new MainActivity.Renderer(this));
-        cvgSurfaceView.setZOrderOnTop(true);
-        cvgSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+        glSurfaceView.setPreserveEGLContextOnPause(true);
+        glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0); // Alpha used for plane blending.
+        glSurfaceView.setRenderer(new MainActivity.Renderer(this));
+        glSurfaceView.setZOrderOnTop(true);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
 
     private BaseLoaderCallback cvLoaderCallBack = new BaseLoaderCallback(this) {
@@ -116,57 +122,37 @@ public class MainActivity extends AppCompatActivity {
     };
     private class Renderer implements GLSurfaceView.Renderer {
         private Context context;
+        Cube cube;
+        private final float[] projectionMatrix = new float[16];
         public Renderer(Context context){
+            Log.e(TAG, "===Renderer: create!!!" );
             this.context = context;
         }
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            try{
-                backgroundRenderer.createOnGlThread(this.context);
-            }catch (IOException e){
-                Log.e(TAG, "onSurfaceCreated: Fail to create background renderer" );
-            }
-
-//            GLES30.glClearColor(1.0f,.0f,.0f,1.0f);
-//            GLES30.glEnable(GLES30.GL_DEPTH_TEST);
-//            GLES30.glEnable(GLES30.GL_CULL_FACE);
-//            JniInterface.JNIonGlSurfaceCreated(calvr_dest);
+            GLES30.glClearColor(0.01f,0.01f,0.01f,0.01f);
+            GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+            GLES30.glEnable(GLES30.GL_CULL_FACE);
+//
+            cube = new Cube(context);
+            Log.e(TAG, "===Renderer: onSurfaceCreated!!!" );
         }
 
         @Override
         public void onSurfaceChanged(GL10 gl, int width, int height) {
             gl.glViewport(0,0,width,height);
-            viewportWidth = width;
-            viewportHeight = height;
-
+            float ratio = (float) width / height;
+//            MatrixState.set_projection_matrix(445f, 445f, 319.5f, 239.500000f, width, height, 0.01f, 100f);
+//            Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+//            MatrixState.set_projection_matrix(projectionMatrix);
+            Log.e(TAG, "===Renderer: onSurfaceChanged!!!" );
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
-//            Log.e(TAG, "onDrawFrame: HERE!!!!!!!!!!1" );
-//            glClear( GLES30.GL_DEPTH_BUFFER_BIT | GLES30.GL_COLOR_BUFFER_BIT);
-//
-//            int displayRotation = getWindowManager().getDefaultDisplay().getRotation();
-//            backgroundRenderer.draw(cframe,
-//                                    cframe.cols(),
-//                                    cframe.rows(),
-//                    (float)viewportWidth / viewportHeight,
-//                                    displayRotation);
-
-//            Log.e(TAG, "!!!frame!!!!!" );
-            // Synchronized to avoid racing onDestroy.
-//            synchronized (this) {
-//                if (controllerAddr == 0) {
-//                    return;
-//                }
-//                if (viewportChanged) {
-//                    int displayRotation = getWindowManager().getDefaultDisplay().getRotation();
-//                    JniInterface.JNIonViewChanged(displayRotation, viewportWidth, viewportHeight);
-//
-//                    viewportChanged = false;
-//                }
-//                JniInterface.JNIdrawFrame(cframe.getNativeObjAddr());
-//            }
+            gl.glClear( GLES30.GL_DEPTH_BUFFER_BIT | GLES30.GL_COLOR_BUFFER_BIT);
+            Log.e(TAG, "===onDrawFrame: draw!!!!!!" );
+            cube.draw();
         }
 
     }
