@@ -119,8 +119,9 @@ set(OpenCV_SHARED OFF)
 set(OpenCV_USE_MANGLED_PATHS FALSE)
 
 set(OpenCV_LIB_COMPONENTS opencv_highgui;opencv_features2d;opencv_shape;opencv_imgcodecs;opencv_ml;opencv_videoio;opencv_dnn;opencv_flann;opencv_objdetect;opencv_core;opencv_calib3d;opencv_video;opencv_superres;opencv_photo;opencv_imgproc;opencv_stitching;opencv_videostab;opencv_java)
-set(OpenCV_INCLUDE_DIRS "${OpenCV_INSTALL_PATH}/sdk/native/jni/include" "${OpenCV_INSTALL_PATH}/sdk/native/jni/include/opencv")
-
+#set(OpenCV_INCLUDE_DIRS "${OpenCV_INSTALL_PATH}/sdk/native/jni/include" "${OpenCV_INSTALL_PATH}/sdk/native/jni/include/opencv")
+set(OpenCV_INCLUDE_DIRS "${OpenCV_INSTALL_PATH}/opencv/native/jni/include" "${OpenCV_INSTALL_PATH}/opencv/native/jni/include/opencv")
+#message(FATAL_ERROR "${OpenCV_INCLUDE_DIRS}")
 if(NOT TARGET opencv_core)
   include(${CMAKE_CURRENT_LIST_DIR}/OpenCVModules${OpenCV_MODULES_SUFFIX}.cmake)
 endif()
