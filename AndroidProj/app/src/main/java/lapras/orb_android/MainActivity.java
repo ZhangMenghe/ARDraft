@@ -12,6 +12,8 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.IOException;
 
@@ -21,14 +23,14 @@ import javax.microedition.khronos.opengles.GL10;
 import static lapras.orb_android.CVandCGViewBase.RGBA;
 
 public class MainActivity extends AppCompatActivity {
-    static {
-        System.loadLibrary("opencv_java3");
-        System.loadLibrary("orbAndroid");
-    }
     private static final String TAG = "MainActivity";
     private CVandCGViewBase cvgSurfaceView;
+
+    private long controllerAddr;
+
     private BackgroundRenderer backgroundRenderer = new BackgroundRenderer();
     private Mat cframe;
+//    private Size _frame_size = new Size(640,480);
 
     private int viewportWidth;
     private int viewportHeight;
@@ -37,8 +39,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        JniInterface.assetManager = getAssets();
+        controllerAddr = JniInterface.JNIcreateController(JniInterface.assetManager);
+
         setupSurfaceView();
-        cframe = new Mat(640,480, CvType.CV_8UC4);
+//        cframe = new Mat(640,480, CvType.CV_8UC4);
     }
     @Override
     protected void onResume() {
@@ -77,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupSurfaceView(){
         cvgSurfaceView = (CVandCGViewBase) findViewById(R.id.camera_view);
 
-//        cvgSurfaceView.enableFpsMeter();
+        cvgSurfaceView.enableFpsMeter();
         cvgSurfaceView.setCameraIndex(CVandCGJavaCamera2View.CAMERA_ID_ANY);
         cvgSurfaceView.setCvCameraViewListener(new cvgCamListener());
         cvgSurfaceView.disableView();
@@ -137,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onDrawFrame(GL10 gl) {
+//            Log.e(TAG, "onDrawFrame: HERE!!!!!!!!!!1" );
 //            glClear( GLES30.GL_DEPTH_BUFFER_BIT | GLES30.GL_COLOR_BUFFER_BIT);
 //
 //            int displayRotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -158,8 +165,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                    viewportChanged = false;
 //                }
-//                JniInterface.JNIdrawFrame();
-//                updateFPS(JniInterface.JNIgetFPS());
+//                JniInterface.JNIdrawFrame(cframe.getNativeObjAddr());
 //            }
         }
 
@@ -175,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
         public void onCameraViewStopped() {
         }
         public Mat onCameraFrame(CVandCGViewBase.CvCameraViewFrame inputFrame){
+            cframe = inputFrame.rgba();
+            JniInterface.JNIdrawFrame(cframe.getNativeObjAddr());
             return (mPreviewFormat == RGBA)? inputFrame.rgba() : inputFrame.gray();
         }
     }

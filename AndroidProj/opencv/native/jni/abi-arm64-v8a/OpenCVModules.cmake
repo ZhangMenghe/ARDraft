@@ -253,6 +253,7 @@ but not all the files it references.
   endforeach()
   unset(_IMPORT_CHECK_FILES_FOR_${target})
 endforeach()
+set(Opencv_Native_Libraries ${_IMPORT_CHECK_TARGETS})
 unset(_IMPORT_CHECK_TARGETS)
 
 # This file does not depend on other imported targets which have
