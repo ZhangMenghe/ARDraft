@@ -4,7 +4,7 @@ import android.content.res.AssetManager;
 
 public class JniInterface {
     static {
-//        System.loadLibrary("opencv_java3");
+        System.loadLibrary("opencv_java3");
         System.loadLibrary("orbAndroid");
     }
     private static final String TAG = "JniInterfaceCalVR";
