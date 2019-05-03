@@ -298,6 +298,8 @@ public class CVandCGJavaCamera2View extends CVandCGViewBase {
 //                        break;
 ////                }
 //            }
+            //TODO:debug only!!
+            bestWidth = 640; bestHeight = 480;
             Log.i(LOGTAG, "best size: " + bestWidth + "x" + bestHeight);
             assert(!(bestWidth == 0 || bestHeight == 0));
             if (mPreviewSize.getWidth() == bestWidth && mPreviewSize.getHeight() == bestHeight)

@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         Cube cube;
         private final float[] projectionMatrix = new float[16];
         public Renderer(Context context){
-            Log.e(TAG, "===Renderer: create!!!" );
+//            Log.e(TAG, "===Renderer: create!!!" );
             this.context = context;
         }
         @Override
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             GLES30.glEnable(GLES30.GL_CULL_FACE);
 //
             cube = new Cube(context);
-            Log.e(TAG, "===Renderer: onSurfaceCreated!!!" );
+//            Log.e(TAG, "===Renderer: onSurfaceCreated!!!" );
         }
 
         @Override
@@ -145,13 +145,13 @@ public class MainActivity extends AppCompatActivity {
 //            MatrixState.set_projection_matrix(445f, 445f, 319.5f, 239.500000f, width, height, 0.01f, 100f);
 //            Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
 //            MatrixState.set_projection_matrix(projectionMatrix);
-            Log.e(TAG, "===Renderer: onSurfaceChanged!!!" );
+//            Log.e(TAG, "===Renderer: onSurfaceChanged!!!" );
         }
 
         @Override
         public void onDrawFrame(GL10 gl) {
             gl.glClear( GLES30.GL_DEPTH_BUFFER_BIT | GLES30.GL_COLOR_BUFFER_BIT);
-            Log.e(TAG, "===onDrawFrame: draw!!!!!!" );
+//            Log.e(TAG, "===onDrawFrame: draw!!!!!!" );
             cube.draw();
         }
 
