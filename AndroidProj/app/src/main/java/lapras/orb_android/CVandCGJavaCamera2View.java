@@ -279,7 +279,7 @@ public class CVandCGJavaCamera2View extends CVandCGViewBase {
             });
             //find the later width(by getHeight()) that just smaller to canvas width
             for(Size sz:sizeList){
-//                Log.d(LOGTAG, "trying size: " + sz.getWidth() + "x" + sz.getHeight());
+//                Log.d(LOGTAG, "===trying size: " + sz.getWidth() + "x" + sz.getHeight());
                 if(sz.getHeight() <= width){bestHeight = sz.getHeight(); bestWidth = sz.getWidth(); break;}
             }
 
@@ -299,8 +299,8 @@ public class CVandCGJavaCamera2View extends CVandCGViewBase {
 ////                }
 //            }
             //TODO:debug only!!
-            bestWidth = 640; bestHeight = 480;
-            Log.i(LOGTAG, "best size: " + bestWidth + "x" + bestHeight);
+            bestWidth = 800; bestHeight = 600;
+            Log.i(LOGTAG, "===best size: " + bestWidth + "x" + bestHeight);
             assert(!(bestWidth == 0 || bestHeight == 0));
             if (mPreviewSize.getWidth() == bestWidth && mPreviewSize.getHeight() == bestHeight)
                 return false;

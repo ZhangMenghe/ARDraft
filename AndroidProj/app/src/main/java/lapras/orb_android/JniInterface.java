@@ -12,6 +12,10 @@ public class JniInterface {
 
     public static native long JNIcreateController(AssetManager asset_manager);
 
+    public static native void JNIsetupResource(String calvr_path);
+
+    public static native void JNIregisterJavaObject(Object obj, String obj_name);
+
 //    public static native void JNIonGlSurfaceCreated(String calvr_path);
 //
 //    public static native void JNIonViewChanged(int rot, int width, int height);

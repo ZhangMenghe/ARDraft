@@ -18,6 +18,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -41,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
     private int viewportWidth;
     private int viewportHeight;
 
+
+    // Resource
+    final static private String calvr_folder = "calvrAssets";
+    String calvr_dest = null;
+    String resourceDest = null;
+    boolean skipLoadingResource = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         JniInterface.assetManager = getAssets();
         controllerAddr = JniInterface.JNIcreateController(JniInterface.assetManager);
-
+        JniInterface.JNIregisterJavaObject(this, "MainActivity");
         setupSurfaceView();
+        setupResource();
 //        cframe = new Mat(640,480, CvType.CV_8UC4);
     }
     @Override
@@ -103,7 +112,24 @@ public class MainActivity extends AppCompatActivity {
         glSurfaceView.setZOrderOnTop(true);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }
-
+    private void MobileDesktopFileExchange(String path_mobile, boolean to_mobile){
+        if(to_mobile && skipLoadingResource){
+            File destDir = new File(path_mobile);
+            if(destDir.exists())
+                return;
+        }
+        try{
+            fileUtils.copyFromAsset(getAssets(), calvr_folder, calvr_dest);
+        }catch (Exception e){
+            Log.e(TAG, "copyFromAssets: Failed to copy from asset folder");
+        }
+    }
+    private void setupResource(){
+        resourceDest = getFilesDir().getAbsolutePath() + "/";
+        calvr_dest = resourceDest + calvr_folder;
+        MobileDesktopFileExchange(calvr_dest, true);
+        JniInterface.JNIsetupResource(calvr_dest);
+    }
     private BaseLoaderCallback cvLoaderCallBack = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -171,5 +197,8 @@ public class MainActivity extends AppCompatActivity {
             JniInterface.JNIdrawFrame(cframe.getNativeObjAddr());
             return (mPreviewFormat == RGBA)? inputFrame.rgba() : inputFrame.gray();
         }
+    }
+    public void CopyBackFiles(String str){
+        fileUtils.writeToDevice(str);
     }
 }

@@ -22,9 +22,7 @@ find_package(OpenCV 3.4 REQUIRED java)
 
 
 set(DBOW2_DIR "${THIRD_PARTY_DIR}/DBoW2")
-set(DBOW2_INCLUDE
-        ${DBOW2_DIR}/DUtils
-        ${DBOW2_DIR}/DBoW2)
+set(DBOW2_INCLUDE ${DBOW2_DIR}/include/DBoW2)
 add_library(DBoW2 STATIC IMPORTED)
 set_target_properties(DBoW2 PROPERTIES IMPORTED_LOCATION
         ${DBOW2_DIR}/lib/libDBoW2.a)
@@ -67,7 +65,8 @@ add_library(ORBSLAM2
 add_library(orbAndroid
         SHARED
         ${CPP_PATH}/allController.cpp
-        ${CPP_PATH}/jni_interface.cpp)
+        ${CPP_PATH}/jni_interface.cpp
+        ${CPP_PATH}/AndroidHelper.cpp)
 #message(FATAL_ERROR "======${Opencv_Native_Libraries}")
 target_link_libraries(orbAndroid
                       android
