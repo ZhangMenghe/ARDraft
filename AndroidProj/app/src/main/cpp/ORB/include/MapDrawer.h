@@ -24,7 +24,10 @@
 #include"Map.h"
 #include"MapPoint.h"
 #include"KeyFrame.h"
-#include<pangolin/pangolin.h>
+
+#ifndef __ANDROID__
+#include <pangolin/pangolin.h>
+#endif
 
 #include<mutex>
 
@@ -34,16 +37,21 @@ namespace ORB_SLAM2
 class MapDrawer
 {
 public:
-    MapDrawer(Map* pMap, const string &strSettingPath);
+    MapDrawer(Map* pMap, const std::string &strSettingPath);
 
     Map* mpMap;
 
     void DrawMapPoints();
     void DrawKeyFrames(const bool bDrawKF, const bool bDrawGraph);
-    void DrawCurrentCamera(pangolin::OpenGlMatrix &Twc);
+
     void SetCurrentCameraPose(const cv::Mat &Tcw);
     void SetReferenceKeyFrame(KeyFrame *pKF);
-    void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M);
+
+    #ifndef __ANDROID__
+            void DrawCurrentCamera(pangolin::OpenGlMatrix &Twc);
+            void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M);
+    #endif
+
 
 private:
 

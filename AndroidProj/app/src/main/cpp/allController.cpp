@@ -11,6 +11,7 @@
 #include <opencv2/features2d.hpp>
 
 #include "jni_interface.h"
+
 using namespace DBoW2;
 allController::allController(AAssetManager *assetManager):_asset_manager(assetManager){
 //    Eigen::MatrixXd M(2,2);
@@ -26,6 +27,12 @@ void allController::onDrawFrame(cv::Mat *mat) {
         voc_images.push_back(*mat);
         if(voc_images.size() > 3)
             constructVOC();
+    }
+    if(SLAM){
+        LOGE("=====WE HAVE SLAM!!!!");
+        std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+        ttrack = std::chrono::duration_cast < std::chrono::duration < double >> (t1 - t0).count();
+        cv::Mat pose = SLAM->TrackMonocular(*mat,ttrack);
     }
 
 //    _frame = *mat;
@@ -81,7 +88,7 @@ void allController::testVocCreation(const std::vector<std::vector<cv::Mat > > &f
         }
     }
     std::string fhead(getenv("CALVR_HOME"));
-    std::string filename = fhead + "lapras_small_voc.yml.gz";
+    std::string filename = fhead + "/lapras_small_voc.yml.gz";
     voc.save(filename);
     LOGE("============================================saved==============");
 //    CopyBackFiles(filename.c_str());
@@ -121,4 +128,18 @@ void allController::constructVOC() {
 
     testVocCreation(features);
     testDatabase(features);
+
+
+    std::string fhead(getenv("CALVR_HOME"));
+    std::string vocabulary_filename = fhead + "/lapras_small_voc.yml.gz";
+    std::string camera_calib_filename = fhead + "/SamsungS9Calib.yaml";
+//    ORB_SLAM2::System SLAM(vocabulary_filename.c_str(),
+//                           camera_calib_filename.c_str(),
+//            ORB_SLAM2::System::MONOCULAR,
+//            false);
+
+    SLAM = new ORB_SLAM2::System(vocabulary_filename.c_str(),
+                           camera_calib_filename.c_str(),
+            ORB_SLAM2::System::MONOCULAR,
+            false);
 }

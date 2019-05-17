@@ -190,7 +190,7 @@
 # ------------------------------------------------------------------------------
 
 cmake_minimum_required( VERSION 2.6.3 )
-
+message(fatal_error, "--------------------inside")
 if( DEFINED CMAKE_CROSSCOMPILING )
  # subsequent toolchain loading is not really needed
  return()

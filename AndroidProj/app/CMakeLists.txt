@@ -9,16 +9,19 @@ SET(SYSTEM_PACKAGE_PATH "/home/menghe/PACKAGES")
 SET(THIRD_PARTY_DIR ${CMAKE_SOURCE_DIR}/../ThirdParty)
 
 #opencv
+set( ANDROID_NDK_ABI_NAME "arm64-v8a" )
 set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../opencv/native/jni")
-#SET(OpenCV_DIR "${THIRD_PARTY_DIR}/opencv")
-set(OpenCV_INCLUDE_DIR ${OpenCV_DIR}/include)
 
-INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIR})
+#SET(OpenCV_DIR "${THIRD_PARTY_DIR}/opencv")
+#set(OpenCV_INCLUDE_DIR ${OpenCV_DIR}/include)
+
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+find_package(OpenCV REQUIRED)
 
 #add_library(opencv_java3 SHARED IMPORTED)
 #set_target_properties(opencv_java3 PROPERTIES IMPORTED_LOCATION
 #        ${OpenCV_DIR}/libopencv_java3.so)
-find_package(OpenCV 3.4 REQUIRED java)
+#find_package(OpenCV 3.4 REQUIRED)
 
 
 set(DBOW2_DIR "${THIRD_PARTY_DIR}/DBoW2")
@@ -29,6 +32,8 @@ set_target_properties(DBoW2 PROPERTIES IMPORTED_LOCATION
 INCLUDE_DIRECTORIES(${DBOW2_INCLUDE})
 
 
+
+
 SET(EIGEN3_INCLUDE_DIR "${SYSTEM_PACKAGE_PATH}/eigen-3.7")
 
 
@@ -37,13 +42,14 @@ add_library(g2o STATIC IMPORTED)
 set_target_properties(g2o PROPERTIES IMPORTED_LOCATION
         ${g2o_SOURCE_DIR}/lib/libg2o.a)
 INCLUDE_DIRECTORIES(
-        ${g2o_SOURCE_DIR}/core
-        ${g2o_SOURCE_DIR}/types
-        ${g2o_SOURCE_DIR}/stuff
+        ${g2o_SOURCE_DIR}/g2o
         ${EIGEN3_INCLUDE_DIR})
 
 INCLUDE_DIRECTORIES(src/main/cpp/ORB/include)
-add_library(ORBSLAM2
+project(ORBSLAM2 C CXX)
+#add_library(ORBSLAM2
+#            SHARED
+SET(ORBSLAM2_SRC
             src/main/cpp/ORB/src/System.cc
             src/main/cpp/ORB/src/Tracking.cc
             src/main/cpp/ORB/src/LocalMapping.cc
@@ -66,13 +72,14 @@ add_library(orbAndroid
         SHARED
         ${CPP_PATH}/allController.cpp
         ${CPP_PATH}/jni_interface.cpp
-        ${CPP_PATH}/AndroidHelper.cpp)
+        ${CPP_PATH}/AndroidHelper.cpp
+        ${ORBSLAM2_SRC})
 #message(FATAL_ERROR "======${Opencv_Native_Libraries}")
 target_link_libraries(orbAndroid
                       android
                       mediandk
-                      ${ORBSLAM2}
+#                      ORBSLAM2
                       DBoW2
                       g2o
-                      ${OpenCV_LIBRARIES}
+                      ${OpenCV_LIBS}
                       ${KERNEL_LIBRARIES})

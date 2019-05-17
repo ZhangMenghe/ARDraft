@@ -22,9 +22,12 @@
 #include "ORBmatcher.h"
 
 #include<mutex>
+using std::mutex;
+using std::unique_lock;
+using std::map;
+using std::vector;
 
-namespace ORB_SLAM2
-{
+namespace ORB_SLAM2{
 
 long unsigned int MapPoint::nNextId=0;
 mutex MapPoint::mGlobalMutex;

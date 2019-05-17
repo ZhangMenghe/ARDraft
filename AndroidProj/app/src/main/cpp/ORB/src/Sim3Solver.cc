@@ -28,8 +28,8 @@
 #include "KeyFrame.h"
 #include "ORBmatcher.h"
 
-#include "Thirdparty/DBoW2/DUtils/Random.h"
-
+#include "DUtils/Random.h"
+using std::vector;
 namespace ORB_SLAM2
 {
 
@@ -132,7 +132,7 @@ void Sim3Solver::SetRansacParameters(double probability, int minInliers, int max
     else
         nIterations = ceil(log(1-mRansacProb)/log(1-pow(epsilon,3)));
 
-    mRansacMaxIts = max(1,min(nIterations,mRansacMaxIts));
+    mRansacMaxIts = fmax(1,fmin(nIterations,mRansacMaxIts));
 
     mnIterations = 0;
 }

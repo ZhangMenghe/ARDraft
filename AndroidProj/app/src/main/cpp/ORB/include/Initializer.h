@@ -22,7 +22,7 @@
 
 #include<opencv2/opencv.hpp>
 #include "Frame.h"
-
+using std::vector;
 
 namespace ORB_SLAM2
 {
@@ -30,7 +30,7 @@ namespace ORB_SLAM2
 // THIS IS THE INITIALIZER FOR MONOCULAR SLAM. NOT USED IN THE STEREO OR RGBD CASE.
 class Initializer
 {
-    typedef pair<int,int> Match;
+    typedef std::pair<int,int> Match;
 
 public:
 

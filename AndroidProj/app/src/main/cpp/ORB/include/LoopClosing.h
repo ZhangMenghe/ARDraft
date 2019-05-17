@@ -31,7 +31,7 @@
 
 #include <thread>
 #include <mutex>
-#include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
+#include "types/types_seven_dof_expmap.h"
 
 namespace ORB_SLAM2
 {
@@ -45,10 +45,10 @@ class LoopClosing
 {
 public:
 
-    typedef pair<set<KeyFrame*>,int> ConsistentGroup;    
-    typedef map<KeyFrame*,g2o::Sim3,std::less<KeyFrame*>,
-        Eigen::aligned_allocator<std::pair<const KeyFrame*, g2o::Sim3> > > KeyFrameAndPose;
-
+    typedef std::pair<std::set<KeyFrame*>,int> ConsistentGroup;
+//    typedef std::unordered_map<KeyFrame*,g2o::Sim3,std::less<KeyFrame*>> KeyFrameAndPose;//,
+//        Eigen::aligned_allocator<std::pair<const KeyFrame*, g2o::Sim3> > > KeyFrameAndPose;
+    typedef std::unordered_map<KeyFrame*,g2o::Sim3> KeyFrameAndPose;
 public:
 
     LoopClosing(Map* pMap, KeyFrameDatabase* pDB, ORBVocabulary* pVoc,const bool bFixScale);
@@ -68,11 +68,11 @@ public:
     void RunGlobalBundleAdjustment(unsigned long nLoopKF);
 
     bool isRunningGBA(){
-        unique_lock<std::mutex> lock(mMutexGBA);
+        std::unique_lock<std::mutex> lock(mMutexGBA);
         return mbRunningGBA;
     }
     bool isFinishedGBA(){
-        unique_lock<std::mutex> lock(mMutexGBA);
+        std::unique_lock<std::mutex> lock(mMutexGBA);
         return mbFinishedGBA;
     }   
 
